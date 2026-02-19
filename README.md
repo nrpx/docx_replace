@@ -1,7 +1,7 @@
 # Docx Replace
 
 This gem allows you to generate .docx files in your rails or ruby app by
-embedding variables inside of a .docx template. This is purposefully
+embedding variables inside a .docx template. This is purposefully
 meant to be simple and feature-light.
 
 ## Installation
@@ -12,46 +12,45 @@ Add this line to your application's Gemfile:
 
 And then execute:
 
-    $ bundle
+    bundle
 
 Or install it yourself as:
 
-    $ gem install docx_replace
+    gem install docx_replace
 
 ## Usage
 
 Inside of a rails controller, your code might look something like this (although I would recommend extracting most of this into a separate class):
 
 ```ruby
-def user_report
-  @user = User.find(params[:user_id])
+  def user_report
+    @user = User.find(params[:user_id])
 
-  respond_to do |format|
-    format.docx do
-      # Initialize DocxReplace with your template
-      doc = DocxReplace::Doc.new("#{Rails.root}/lib/docx_templates/my_template.docx", "#{Rails.root}/tmp")
+    respond_to do |format|
+      format.docx do
+        # Initialize DocxReplace with your template
+        doc = DocxReplace::Doc.new("#{Rails.root}/lib/docx_templates/my_template.docx", "#{Rails.root}/tmp")
 
-      # Replace some variables. $var$ convention is used here, but not required.
-      doc.replace("FIRSTNAME", @user.first_name)
-      doc.replace("LASTNAME", @user.last_name)
-      doc.replace("USERBIO", @user.bio)
+        # Replace some variables. $var$ convention is used here, but not required.
+        doc.replace("FIRSTNAME", @user.first_name)
+        doc.replace("LASTNAME", @user.last_name)
+        doc.replace("USERBIO", @user.bio)
 
-      # Replace multiple occurrences
-      doc.replace("BIRTHDATE", @user.birth_date, true)
+        # Replace multiple occurrences
+        doc.replace("BIRTHDATE", @user.birth_date, true)
 
-      # Write the document back to a temporary file
-      tmp_file = Tempfile.new('word_template', "#{Rails.root}/tmp")
-      doc.commit(tmp_file.path)
+        # Write the document back to a temporary file
+        tmp_file = Tempfile.new('word_template', "#{Rails.root}/tmp")
+        doc.commit(tmp_file.path)
 
-      # Respond to the request by sending the temp file
-      send_file tmp_file.path, filename: "user_#{@user.id}_report.docx", disposition: 'attachment'
+        # Respond to the request by sending the temp file
+        send_file tmp_file.path, filename: "user_#{@user.id}_report.docx", disposition: 'attachment'
+      end
     end
   end
-end
 ```
 
 **Note:** Word sometimes wraps characters in XML tags, causing the replacement to not work. I recommend not using any special characters in your variable names.
-
 
 ## Contributing
 

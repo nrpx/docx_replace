@@ -17,3 +17,4 @@ spec/version_tmp
 tmp
 *.swp
 .DS_Store
+.idea/
